@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apache-deployment
+  labels:
+    role: webserver
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      role: webserver
+  template:
+    metadata:
+      labels:
+        role: webserver
+    spec:
+      containers:
+      - name: frontend
+        image: ddefrancesco/httpd
+        ports:
+        - containerPort: 80 
+        - containerPort: 443        
+        volumeMounts:
+          - mountPath: "/var/www/html"
+            name: httpd-pv-storage
+        resources:
+          requests: 
+            memory: 500Mi
+            cpu: "0.5"
+          limits:
+            memory: 500Mi
+            cpu: "0.5"
+      volumes:
+        - name: httpd-pv-storage
+          persistentVolumeClaim:
+            claimName: httpd-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  type: NodePort
+  selector:
+    role: webserver
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+    nodePort: 30080

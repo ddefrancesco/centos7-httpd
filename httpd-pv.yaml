@@ -1,0 +1,16 @@
+#pods/storage/pv-volume.yaml 
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: httpd-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
