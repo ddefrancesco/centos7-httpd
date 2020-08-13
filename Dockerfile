@@ -11,6 +11,18 @@ RUN yum -y --setopt=tsflags=nodocs update && \
     yum -y install shibboleth.x86_64 && \
     yum clean all
 
+WORKDIR /tmp
+
+RUN yum install -y unzip && \
+curl https://shibboleth.net/downloads/PGP_KEYS 2>/dev/null | gpg --import 
+RUN curl http://shibboleth.net/downloads/tools/xmlsectool/latest/xmlsectool-2.0.0-bin.zip > xmlsectool.zip && \
+curl http://shibboleth.net/downloads/tools/xmlsectool/latest/xmlsectool-2.0.0-bin.zip.asc > xmlsectool.zip.asc && \
+gpg --verify xmlsectool.zip.asc xmlsectool.zip 
+RUN unzip xmlsectool.zip && \
+mv xmlsectool-2.0.0 /opt/xmlsectool && \
+rm -f xmlsectool.zip xmlsectool.zip.asc 
+
+
 EXPOSE 80 443
 
 # Simple startup script to avoid some issues observed with container restart
